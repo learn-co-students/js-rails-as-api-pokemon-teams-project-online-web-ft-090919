@@ -23,27 +23,29 @@ function renderTrainerCards(json) {
     const ul = document.createElement('ul');
 
     button.addEventListener('click', function(e) {
+      
       let trainerID = trainer.id;
       async function asyncCall() {
-        let result = await addPokemon(trainerID)
-        let pokemonID = result.ID
+        let result = await addPokemon(trainerID);
+        
+        let pokemonID = result.id;
         const li = document.createElement('li');
         const button2 = document.createElement('button');
-        button2.setAttribute('data-pokemon-id', `${result.species}`);
+        button2.setAttribute('data-pokemon-id', `${result.stuff.species}`);
         button2.innerText = 'Release';
         button2.style.float = 'right';
         button2.style.backgroundColor = 'red';
-        li.innerText += `${result.nickname} (${result.species})`;
+        li.innerText += `${result.stuff.nickname} (${result.stuff.species})`;
         li.appendChild(button2);
         ul.appendChild(li);
 
         button2.addEventListener('click', function(e) {
-          removePokemon(result.id)
-          this.parentNode.remove()
+          removePokemon(result.stuff.id);
+          this.parentNode.remove();
         });
       }
-      
-      asyncCall()
+
+      asyncCall();
     });
 
     trainer.pokemons.forEach(function(poke) {
@@ -58,8 +60,8 @@ function renderTrainerCards(json) {
       ul.appendChild(li);
 
       button2.addEventListener('click', function(e) {
-        removePokemon(poke.id)
-        this.parentNode.remove()
+        removePokemon(poke.id);
+        this.parentNode.remove();
       });
     });
 
@@ -92,6 +94,7 @@ function addPokemon(trainerID) {
       return response.json();
     })
     .then(function(object) {
+      console.log(object)
       return object;
     });
 }
@@ -114,4 +117,7 @@ function removePokemon(pokemonID) {
       return object;
     });
 }
-fetchTrainers();
+
+window.addEventListener('DOMContentLoaded', function(e) {
+  fetchTrainers();
+});
