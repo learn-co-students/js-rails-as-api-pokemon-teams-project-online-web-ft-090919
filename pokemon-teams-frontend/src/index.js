@@ -32,8 +32,11 @@ function renderTrainerCards(json) {
       li.innerText += `${poke.nickname} (${poke.species})`;
       li.appendChild(button2);
       ul.appendChild(li);
-
-      button2.addEventListener('click', function(e) {});
+      
+      button2.addEventListener('click', function(e) {
+        let trainerID = trainer.id
+        addPokemon(trainerID)
+      });
     });
 
     div.className = 'card';
@@ -44,9 +47,9 @@ function renderTrainerCards(json) {
   });
 }
 
-function addPokemon() {
+function addPokemon(trainerID) {
   let formData = {
-    trainer_id: 2
+    trainer_id: trainerID
   }
   let configObj = {
     method: 'POST',
@@ -67,4 +70,3 @@ function addPokemon() {
 }
 
 fetchTrainers();
-addPokemon();
