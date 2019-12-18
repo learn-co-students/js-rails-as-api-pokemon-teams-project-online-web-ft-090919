@@ -45,12 +45,16 @@ function renderTrainerCards(json) {
 }
 
 function addPokemon() {
+  let formData = {
+    trainer_id: 2
+  }
   let configObj = {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
       Accept: 'application/json'
-    }
+    },
+    body: JSON.stringify(formData)
   };
 
   let trainers = fetch('http://localhost:3000/pokemons', configObj)
