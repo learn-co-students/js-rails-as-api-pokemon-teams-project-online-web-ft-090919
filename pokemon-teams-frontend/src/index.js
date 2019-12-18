@@ -22,6 +22,29 @@ function renderTrainerCards(json) {
     // ul for pokemon list
     const ul = document.createElement('ul');
 
+    button.addEventListener('click', function(e) {
+      let trainerID = trainer.id;
+      async function asyncCall() {
+        let result = await addPokemon(trainerID)
+        const li = document.createElement('li');
+        const button2 = document.createElement('button');
+        button2.setAttribute('data-pokemon-id', `${result.species}`);
+        button2.innerText = 'Release';
+        button2.style.float = 'right';
+        button2.style.backgroundColor = 'red';
+        li.innerText += `${result.nickname} (${result.species})`;
+        li.appendChild(button2);
+        ul.appendChild(li);
+        
+        button2.addEventListener('click', function(e) {
+          this.parentNode.remove()
+        });
+      }
+      
+      asyncCall()
+    });
+
+
     trainer.pokemons.forEach(function(poke) {
       const li = document.createElement('li');
       const button2 = document.createElement('button');
@@ -32,10 +55,9 @@ function renderTrainerCards(json) {
       li.innerText += `${poke.nickname} (${poke.species})`;
       li.appendChild(button2);
       ul.appendChild(li);
-      
+
       button2.addEventListener('click', function(e) {
-        let trainerID = trainer.id
-        addPokemon(trainerID)
+        this.parentNode.remove()
       });
     });
 
@@ -47,10 +69,13 @@ function renderTrainerCards(json) {
   });
 }
 
+function makePokemonListItems(poke) {
+  // refactor pokemon list here
+}
 function addPokemon(trainerID) {
   let formData = {
     trainer_id: trainerID
-  }
+  };
   let configObj = {
     method: 'POST',
     headers: {
@@ -60,13 +85,14 @@ function addPokemon(trainerID) {
     body: JSON.stringify(formData)
   };
 
-  let trainers = fetch('http://localhost:3000/pokemons', configObj)
+  return fetch('http://localhost:3000/pokemons', configObj)
     .then(function(response) {
       return response.json();
     })
     .then(function(object) {
-      console.log(object);
+      return object;
     });
 }
 
+function removePokemon() {}
 fetchTrainers();
