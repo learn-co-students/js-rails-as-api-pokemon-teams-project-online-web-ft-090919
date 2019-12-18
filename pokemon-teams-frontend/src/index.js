@@ -16,10 +16,9 @@ function renderTrainerCards(json) {
     div.setAttribute('data-id', `${trainer.id}`);
     // add pokemon button
     const button = document.createElement('button');
-    
+
     button.setAttribute('data-trainer-id', `${trainer.id}`);
     button.innerText = 'Add Pokemon';
-    // 
     // ul for pokemon list
     const ul = document.createElement('ul');
 
@@ -28,9 +27,13 @@ function renderTrainerCards(json) {
       const button2 = document.createElement('button');
       button2.setAttribute('data-pokemon-id', `${poke.species}`);
       button2.innerText = 'Release';
-      li.innerText += `${poke.species}`;
-      li.appendChild(button2)
+      button2.style.float = 'right';
+      button2.style.backgroundColor = 'red';
+      li.innerText += `${poke.nickname} (${poke.species})`;
+      li.appendChild(button2);
       ul.appendChild(li);
+
+      button2.addEventListener('click', function(e) {});
     });
 
     div.className = 'card';
@@ -41,4 +44,23 @@ function renderTrainerCards(json) {
   });
 }
 
+function addPokemon() {
+  let configObj = {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Accept: 'application/json'
+    }
+  };
+
+  let trainers = fetch('http://localhost:3000/pokemons', configObj)
+    .then(function(response) {
+      return response.json();
+    })
+    .then(function(object) {
+      console.log(object);
+    });
+}
+
 fetchTrainers();
+addPokemon();
