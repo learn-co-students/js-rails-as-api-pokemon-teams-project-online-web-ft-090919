@@ -26,6 +26,7 @@ function renderTrainerCards(json) {
       let trainerID = trainer.id;
       async function asyncCall() {
         let result = await addPokemon(trainerID)
+        let pokemonID = result.ID
         const li = document.createElement('li');
         const button2 = document.createElement('button');
         button2.setAttribute('data-pokemon-id', `${result.species}`);
@@ -35,15 +36,15 @@ function renderTrainerCards(json) {
         li.innerText += `${result.nickname} (${result.species})`;
         li.appendChild(button2);
         ul.appendChild(li);
-        
+
         button2.addEventListener('click', function(e) {
+          removePokemon(result.id)
           this.parentNode.remove()
         });
       }
       
       asyncCall()
     });
-
 
     trainer.pokemons.forEach(function(poke) {
       const li = document.createElement('li');
@@ -57,6 +58,7 @@ function renderTrainerCards(json) {
       ul.appendChild(li);
 
       button2.addEventListener('click', function(e) {
+        removePokemon(poke.id)
         this.parentNode.remove()
       });
     });
@@ -94,5 +96,22 @@ function addPokemon(trainerID) {
     });
 }
 
-function removePokemon() {}
+function removePokemon(pokemonID) {
+  let configObj = {
+    method: 'DELETE',
+    headers: {
+      'Content-Type': 'application/json',
+      Accept: 'application/json'
+    }
+    // body: JSON.stringify(formData)
+  };
+
+  return fetch(`http://localhost:3000/pokemons/${pokemonID}`, configObj)
+    .then(function(response) {
+      return response.json();
+    })
+    .then(function(object) {
+      return object;
+    });
+}
 fetchTrainers();
