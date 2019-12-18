@@ -23,11 +23,10 @@ function renderTrainerCards(json) {
     const ul = document.createElement('ul');
 
     button.addEventListener('click', function(e) {
-      
       let trainerID = trainer.id;
       async function asyncCall() {
         let result = await addPokemon(trainerID);
-        
+
         let pokemonID = result.id;
         const li = document.createElement('li');
         const button2 = document.createElement('button');
@@ -94,7 +93,7 @@ function addPokemon(trainerID) {
       return response.json();
     })
     .then(function(object) {
-      console.log(object)
+      console.log(object);
       return object;
     });
 }
@@ -106,7 +105,6 @@ function removePokemon(pokemonID) {
       'Content-Type': 'application/json',
       Accept: 'application/json'
     }
-    // body: JSON.stringify(formData)
   };
 
   return fetch(`http://localhost:3000/pokemons/${pokemonID}`, configObj)
