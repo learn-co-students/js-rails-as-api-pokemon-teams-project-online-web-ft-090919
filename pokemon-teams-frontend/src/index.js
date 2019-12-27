@@ -2,13 +2,6 @@ const BASE_URL = "http://localhost:3000";
 const TRAINERS_URL = `${BASE_URL}/trainers`;
 const POKEMON_URL = `${BASE_URL}/pokemon`;
 
-const dom = {
-  addBtn: document.querySelector('.add-btn'),
-  removeBtn: document.querySelector('.release'),
-  pokemonList: document.querySelector('.pokemon-list'),
-  cardsContainer: document.querySelector('main')
-}
-
 function getTeams() {
   fetch(TRAINERS_URL)
     .then(response => response.json())
@@ -108,11 +101,6 @@ function renderTeamCard(card) {
   cardsContainer.appendChild(card);
 }
 
-function addPokemon(element) {
-  const list = getList(element);
-  const pokemonName = 
-}
-
 function isSpaceForMore(element) {
   const list = getList(element);
 
@@ -126,33 +114,71 @@ function getList(element) {
   return list;
 }
 
+function addPokemon(element) {
+  const trainerID = parseInt(element.getAttribute("data-trainer-id"), 10);
+
+  const configObject = {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Accept": "application/json"
+    },
+    body: JSON.stringify({ id: trainerID })
+  };
+
+  fetch(POKEMON_URL, configObject)
+    .then(response => response.json())
+    .then(json => renderNewPokemon(json, element))
+    .catch(error => alert(error.message));
+}
+
+function renderNewPokemon(json, element) {
+  const formattedPokemon = formatData(json);
+  const pokemonListItem = createPokemonListItem(formattedPokemon);
+  const releaseButton = createReleaseButton(formattedPokemon);
+
+  pokemonListItem.appendChild(releaseButton);
+  element.nextSibling.appendChild(pokemonListItem);
+}
+
+function formatData(json) {
+  const data = json["data"];
+  const newPokemon = {
+    id: data["id"],
+    species: data["attributes"]["species"],
+    nickname: data["attributes"]["nickname"],
+    trainer_id: data["relationships"]["trainer"]["data"]["id"]
+  };
+
+  return newPokemon;
+}
+
+function removePokemon(element) {
+  const pokemonID = parseInt(element.getAttribute("data-pokemon-id"), 10);
+  destroyPokemon(pokemonID);
+}
+
+function destroyPokemon(id) {
+  fetch(`${POKEMON_URL}/${id}`, { method: "DELETE", })
+    .then(removePokemonFromDom(id))
+    .catch(error => alert(error.message));
+}
+
+function removePokemonFromDom(id) {
+  const pokemonItem = document.querySelector(`[data-pokemon-id="${id}"]`);
+  pokemonItem.parentNode.remove();
+}
+
 document.addEventListener("DOMContentLoaded", function(e) {
   getTeams();
 
-  dom.cardsContainer.addEventListener('click', function(e) {
+  document.querySelector('main').addEventListener('click', function(e) {
     if (e.target.className == "add-btn") {
       if (isSpaceForMore(e.target)) {
-        addPokemon();
-      } else {
-        // do something
+        addPokemon(e.target);
       }
+    } else if (e.target.className == "release") {
+      removePokemon(e.target);
     }
   });
-
 });
-
-
-
-
-
-// id: "1"
-// type: "trainer"
-// attributes:
-//   name: "Natalie"
-// pokemon: Array(6)
-// 0:
-//   id: 1
-// species: "Raichu"
-// nickname: "Xuan"
-// trainer_id: 1
-// __proto__: Object
