@@ -1,2 +1,5 @@
 class PokemonsController < ApplicationController
+
+    
+
 end
