@@ -37,7 +37,7 @@ main.addEventListener("click", e => {
       releasePokemon(e.target.dataset.pokemonId)
       e.target.parentElement.remove()
     }
-    if (e.target.dataset.trainerId) &&  {
+    if (e.target.dataset.trainerId) {
       let trainerId = parseInt(e.target.dataset.trainerId)
       fetchNewPokemon(trainerId)
     } 
