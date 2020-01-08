@@ -8,18 +8,19 @@ function addTrainers() {
     .then(trainers => {
         trainers.forEach(trainer => fetchTrainer(trainer))
     })
+    .then(addReleaseBtns)
+
 }
 
-function fetchTrainer(trainer) {
+const fetchTrainer = (trainer) => {
     return fetch(`${TRAINERS_URL}/${trainer.id}`)
     .then(resp => resp.json())
     .then(trainer => {
         createTrainerCard(trainer)
-        return trainer
     })
 }
 
-function createTrainerCard(trainer) {
+const createTrainerCard = (trainer) => {
     const main = document.querySelector("main")
     let firstPart = `
         <div class="card" data-id="${trainer.id}">
@@ -41,6 +42,40 @@ function createTrainerCard(trainer) {
 
 }
 
+const addReleaseBtns = () => {
+    setTimeout(() => {
+        const releaseBtns = document.querySelectorAll(".release")
+        releaseBtns.forEach(btn => {
+            btn.addEventListener("click", () => {
+                fetch(`${POKEMONS_URL}/${btn.dataset.pokemonId}`, {
+                    method: "DELETE"
+                })
+                document.location.reload()
+            })
+        })
+    }, 500)
+}
+
+const test =  () => {
+    let addBtn = document.querySelector(`[data-trainer-id="1"]`)
+    addBtn.addEventListener("click", () => {
+        console.log("button clicked")
+        debugger
+        fetch(`${POKEMONS_URL}`), {
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify({
+                trainer_id: 1
+            })
+        }
+    })
+}
+
+addTrainers()
+setTimeout(test, 500)
 
 
 
