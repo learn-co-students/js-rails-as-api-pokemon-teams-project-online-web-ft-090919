@@ -59,6 +59,8 @@ function deletePokemon(pokemonId) {
 function addPokemonToCard(pokemon) {
     // grab list element that matches pokemon trainer's id
     let ul = document.querySelector(`[data-id="${pokemon.trainer_id}"] ul`)
+    console.log(ul)
+    
 
     // create li element
     let li = document.createElement('li')
@@ -67,6 +69,7 @@ function addPokemonToCard(pokemon) {
     // create button to release pokemon
     let btn = document.createElement('button')
     btn.className = 'release'
+    btn.innerHTML = 'Release'
 
     // assign pokemon id to button for submit purposes
     btn.dataset.pokemonId = pokemon.id
@@ -130,11 +133,18 @@ function fetchTrainers() {
 }
 
 
+
 // Load trainers and pokemon after DOM is loaded
-document.addEventListener('DOMContentLoaded', function() {
-    fetchTrainers()
-    fetchPokemons()
-})
+window.onload = () => {
+    fetchTrainers();
+    fetchPokemons();
+};
+// below is doing the same thing
+// document.addEventListener('DOMContentLoaded', function() {
+//     fetchTrainers();
+//     fetchPokemons();
+// })
+
 
 /* sample card
 
