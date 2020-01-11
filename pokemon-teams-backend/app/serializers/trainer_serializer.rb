@@ -5,8 +5,8 @@ class TrainerSerializer
 
   attributes :name
 
-  attribute :pokemons do |object|
-    object.filtered_api_call(:pokemons, [:id, :nickname, :species])
-  end
+   attribute :pokemons do |object|
+     object.filtered_api_call(:pokemons, [:id, :nickname, :species])
+   end
 
-end
+ end

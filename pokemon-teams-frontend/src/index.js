@@ -23,42 +23,84 @@ class PageManager {
   }
 
   get initBindingsAndEventListeners(){
-    let addPokemonButtons = document.querySelectorAll(".add-pokemon-button")
-    for (const key in addPokemonButtons){
-      addPokemonButtons[key].addEventListener("click", event => {this.addPokemonRequest(event)})
-  }}
+
+      this.container.addEventListener("click", function checkElementClicked(event){
+        if(event.target.className == "release"){
+          window.pageManager.releasePokemonRequest(event)
+        } else if(event.target.className == "add-pokemon-button") {
+          window.pageManager.addPokemonRequest(event)
+        }
+      })
+
+      // let releasePokemonButtons = document.querySelectorAll(".release")
+      // for (const key in releasePokemonButtons){
+      //   releasePokemonButtons[key].addEventListener("click", event => {this.releasePokemonRequest(event)})
+      // }
+
+      // let addPokemonButtons = document.querySelectorAll(".add-pokemon-button")
+      // for (const key in addPokemonButtons){
+      //   addPokemonButtons[key].addEventListener("click", event => {this.addPokemonRequest(event)})
+      // }
+
+     
+  }
+
+  releasePokemonRequest(event){
+    let configurationObject = {
+      method: "DELETE",
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        pokemon_id: event.target.dataset.pokemonid
+      })
+    }
+    async function releasePokemon() {
+      try{
+      let res = await fetch(window.pageManager.pokemons_url + `/release_pokemon`, configurationObject)
+      window.pageManager.checkRes(res)
+      let json = await res.json()
+      let trainerData = json.data
+      window.pageManager.updatePokemonList(window.pageManager.container.querySelector(`div[data-id = "${trainerData.id}"] `), trainerData)
+
+      }catch(error){
+        alert(error.statusText)
+      }
+    }
+    releasePokemon()
+
+  }
+
 
   addPokemonRequest(event){
-    let payload = {
-      trainer_id: 21
-    }
-
     let configurationObject = {
       method: "POST",
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify(payload)
+      body: JSON.stringify({
+        trainer_id: event.target.dataset.trainerid
+      })
     }
 
-    async function new_pokemon() {
+    async function newPokemon() {
       try{
-        debugger
       let res = await fetch(window.pageManager.trainers_url + `/new_pokemon`, configurationObject)
       window.pageManager.checkRes(res)
       let json = await res.json()
-      let data = json.data
-      
+      let trainerData = json.data
+      window.pageManager.updatePokemonList(window.pageManager.container.querySelector(`div[data-id = "${trainerData.id}"] `), trainerData)
+
       }catch(error){
-        alert(error)
+        alert(error.statusText)
       }
     }
-
-    new_pokemon()
-
-  
+    newPokemon()
   }
+
+
 
   checkRes(res){
     if(!res.ok){
@@ -74,29 +116,33 @@ class PageManager {
 
       cardElement.innerHTML = (`
       <p>${trainer.attributes.name}</p>
-      <button class="add-pokemon-button" data-trainer-id="${trainer.id}">Add Pokemon</button>
+      <button class="add-pokemon-button" data-trainerid="${trainer.id}">Add Pokemon</button>
       <ul class="trainer-pokemon-list">
       </ul>
       `)
 
-      let cardElementList = cardElement.querySelector(".trainer-pokemon-list")
-
-      for (const pokemon_key in trainer.attributes.pokemons){
-        let pokemonObject = trainer.attributes.pokemons[pokemon_key]
-        let cardElementListLi = document.createElement('li')
-        cardElementListLi.innerHTML = (`
-        ${pokemonObject.nickname} (${pokemonObject.species}) <button class="release" data-pokemon-id="${pokemonObject.id}">Release</button>
-        `)
-        cardElementList.appendChild(cardElementListLi)
-      }
+      this.updatePokemonList(cardElement, trainer)
 
       this.container.appendChild(cardElement)
     }
   }
 
+  updatePokemonList(cardElement, trainer){
+    let cardElementList = cardElement.querySelector(".trainer-pokemon-list")
+    cardElementList.innerHTML = ''
+    for (const pokemon_key in trainer.attributes.pokemons){
+      let pokemonObject = trainer.attributes.pokemons[pokemon_key]
+      let cardElementListLi = document.createElement('li')
+      cardElementListLi.innerHTML = (`
+      ${pokemonObject.nickname} (${pokemonObject.species}) <button class="release" data-pokemonid="${pokemonObject.id}">Release</button>
+      `)
+      cardElementList.appendChild(cardElementListLi)
+    }
+
+  }
+
 
 }
-
 
 window.onload = () => {
   window.pageManager = new PageManager
