@@ -10,13 +10,15 @@ class PokemonsController < ApplicationController
     end
 
     def create
-        binding.pry
         trainer = Trainer.find_by(id: params[:trainer_id])
-        name = Faker::Name.first_name
-        species = Faker::Games::Pokemon.name
-        pokemon = Pokemon.new(nickname: name, species: species)
-        trainer.pokemons << pokemon
-        render json: pokemons, except: [:created_at, :updated_at]
+        if trainer.pokemons.length < 6
+            name = Faker::Name.first_name
+            species = Faker::Games::Pokemon.name
+            pokemon = Pokemon.new(nickname: name, species: species)
+            trainer.pokemons << pokemon
+        end
+        redirect_to pokemons_path
+        # render json: pokemons, except: [:created_at, :updated_at]
     end
 
     def destroy
